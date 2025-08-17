@@ -15,7 +15,7 @@ from typing import Optional, Dict, List
 from .transformer_model import BaseTransformerModel
 from symbol_dictionary import SPECIAL_TOKENS
 from dataclasses import dataclass
-
+import numpy as np
 
 
 @dataclass
@@ -302,6 +302,83 @@ class PropertyLoss(nn.Module):
         return nn.functional.binary_cross_entropy(predictions, targets.float())
 
 
+class ThresholdOptimizer:
+    """
+    自适应阈值优化器
+    为每个类别找到最优的决策阈值
+    """
+    def __init__(self, metric='f1', search_range=(0.1, 0.9), search_steps=50):
+        self.metric = metric
+        self.search_range = search_range
+        self.search_steps = search_steps
+        self.optimal_thresholds = None
+        
+    def optimize_thresholds(self, y_true, y_prob):
+        """
+        为每个类别优化阈值
+        """
+        import numpy as np
+        for i in range(len(y_true)):
+            print(len(y_true[i]),len(y_prob[i]))
+        y_true = np.stack(y_true)
+        y_prob = np.stack(y_prob)
+        num_classes = y_true.shape[1]
+        optimal_thresholds = np.zeros(num_classes)
+        
+        # 为每个类别独立优化阈值
+        for class_idx in range(num_classes):
+            y_true_class = y_true[:, class_idx]
+            y_prob_class = y_prob[:, class_idx]
+            
+            # 如果该类别没有正样本，使用默认阈值
+            if y_true_class.sum() == 0:
+                optimal_thresholds[class_idx] = 0.5
+                continue
+                
+            best_score = -1
+            best_threshold = 0.5
+            
+            # 搜索最优阈值
+            thresholds = np.linspace(self.search_range[0], self.search_range[1], self.search_steps)
+            
+            for threshold in thresholds:
+                y_pred_class = (y_prob_class >= threshold).astype(int)
+                
+                # 计算指定指标
+                if self.metric == 'f1':
+                    score = f1_score(y_true_class, y_pred_class, zero_division=0)
+                elif self.metric == 'precision':
+                    pass
+                    # score = precision_score(y_true_class, y_pred_class, zero_division=0)
+                elif self.metric == 'recall':
+                    pass
+                    # score = recall_score(y_true_class, y_pred_class, zero_division=0)
+                else:
+                    # 默认使用F1
+                    score = f1_score(y_true_class, y_pred_class, zero_division=0)
+                
+                if score > best_score:
+                    best_score = score
+                    best_threshold = threshold
+            
+            optimal_thresholds[class_idx] = best_threshold
+        
+        self.optimal_thresholds = optimal_thresholds
+        return optimal_thresholds
+    def predict(self, y_prob):
+        """
+        使用优化的阈值进行预测
+        """
+        
+        y_prob = np.stack(y_prob)
+        if self.optimal_thresholds is None:
+            raise ValueError("需要先调用optimize_thresholds方法")
+        
+        predictions = np.zeros_like(y_prob)
+        for class_idx in range(y_prob.shape[1]):
+            predictions[:, class_idx] = (y_prob[:, class_idx] >= self.optimal_thresholds[class_idx]).astype(int)
+        
+        return predictions
 def calculate_metrics(
     predictions: torch.Tensor,
     targets: torch.Tensor,
