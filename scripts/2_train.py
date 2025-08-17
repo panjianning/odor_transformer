@@ -10,5 +10,5 @@ if __name__ == '__main__':
     )
 
     # 开始训练
-    test_metrics = trainer.train("output/data.csv",resume_from_checkpoint=False)
+    test_metrics = trainer.train("output/data.csv",resume_from_checkpoint=True)
     print(test_metrics)

@@ -32,7 +32,7 @@ class PropertyPredConfig:
 
     # 训练参数
     learning_rate: float = 0.0001  # 学习率
-    num_epoch: int = 100           # 训练轮数
+    num_epoch: int = 300           # 训练轮数
     batch_size: int = 32          # 批次大小
     init_range: float = 0.1       # 参数初始化范围
 
