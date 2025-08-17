@@ -56,6 +56,8 @@ class SymbolDictionary:
         
         self.tokenizer = AutoTokenizer.from_pretrained("seyonec/ChemBERTa-zinc-base-v1")
 
+        SPECIAL_TOKENS.PAD_ID = self.tokenizer.pad_token_id
+        SPECIAL_TOKENS.CLS_ID = self.tokenizer.cls_token_id
 
     def _initialize_special_tokens(self):
         """初始化特殊标记"""
@@ -87,27 +89,27 @@ class SymbolDictionary:
             bool: 是否成功添加（如果SMILES无效则返回False）
         """
         try:
-            # mol = Chem.MolFromSmiles(smiles_str)
-            # if mol is None:
-            #     return False
+            mol = Chem.MolFromSmiles(smiles_str)
+            if mol is None:
+                return False
 
-            # # 添加原子符号
-            # for atom in mol.GetAtoms():
-            #     symbol = atom.GetSymbol()
-            #     if atom.GetIsAromatic():
-            #         symbol = symbol.lower()
+            # 添加原子符号
+            for atom in mol.GetAtoms():
+                symbol = atom.GetSymbol()
+                if atom.GetIsAromatic():
+                    symbol = symbol.lower()
 
-            #     if symbol not in self.symbol_to_id:
-            #         self.symbol_to_id[symbol] = self.next_id
-            #         self.id_to_symbol.append(symbol)
-            #         self.next_id += 1
-                    
-            symbols = self.tokenizer.tokenize(smiles_str)
-            for symbol in symbols:
                 if symbol not in self.symbol_to_id:
                     self.symbol_to_id[symbol] = self.next_id
                     self.id_to_symbol.append(symbol)
-                    self.next_id += 1                
+                    self.next_id += 1
+                    
+            # symbols = self.tokenizer.tokenize(smiles_str)
+            # for symbol in symbols:
+            #     if symbol not in self.symbol_to_id:
+            #         self.symbol_to_id[symbol] = self.next_id
+            #         self.id_to_symbol.append(symbol)
+            #         self.next_id += 1                
 
             return True
 
@@ -155,6 +157,13 @@ class SymbolDictionary:
         Returns:
             List[int]: ID列表
         """
+        return self.tokenizer.encode(
+            smiles_str,
+            add_special_tokens=True,  # 添加[CLS]和[SEP]
+            max_length=512,
+            truncation=True,
+            padding=False
+        )
         ids = []
         i = 0
         max_symbol_length = max(

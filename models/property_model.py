@@ -22,7 +22,7 @@ from dataclasses import dataclass
 class PropertyPredConfig:
     """分子性质预测模型配置"""
     # 模型架构参数
-    dim_embed: int = 256          # 嵌入维度
+    dim_embed: int = 768          # 嵌入维度
     dim_tf_hidden: int = 512      # Transformer隐藏层维度
     num_head: int = 8             # 多头注意力头数
     num_layers: int = 10          # Transformer层数
@@ -50,7 +50,7 @@ class PropertyPredConfig:
     limit_smiles_length: int = 100  # SMILES最大长度
     fold_cv: int = 5                # 交叉验证折数
     
-    num_tokens: int = 306
+    num_tokens: int = 767
     num_labels: int = 138
 
 class PropertyPredictionModel(nn.Module):
