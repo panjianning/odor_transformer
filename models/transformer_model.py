@@ -175,23 +175,23 @@ class BaseTransformerModel(nn.Module):
         self.num_tokens = num_tokens
 
         # 组件初始化
-        # self.symbol_encoder = SymbolEncoder(num_tokens, d_model, init_range)
-        # self.positional_encoder = PositionalEncoder(d_model)
-        # self.transformer_encoder = TransformerEncoder(
-        #     d_model, num_heads, d_hidden, num_layers,
-        #     dropout, norm_first, activation
-        # )
-        from transformers import AutoModel
-        model_name = "seyonec/ChemBERTa-zinc-base-v1"
-        self.bert = AutoModel.from_pretrained(model_name)
-        for param in self.bert.parameters():
-            param.requires_grad = False
+        self.symbol_encoder = SymbolEncoder(num_tokens, d_model, init_range)
+        self.positional_encoder = PositionalEncoder(d_model)
+        self.transformer_encoder = TransformerEncoder(
+            d_model, num_heads, d_hidden, num_layers,
+            dropout, norm_first, activation
+        )
+        # from transformers import AutoModel
+        # model_name = "seyonec/ChemBERTa-zinc-base-v1"
+        # self.bert = AutoModel.from_pretrained(model_name)
+        # for param in self.bert.parameters():
+        #     param.requires_grad = False
 
         self.dropout = nn.Dropout(dropout)
 
     def forward(self, src: torch.Tensor,
                 padding_mask: Optional[torch.Tensor] = None) -> torch.Tensor:
-        return self.bert(src, padding_mask).last_hidden_state
+        # return self.bert(src, padding_mask).last_hidden_state
         """前向传播
 
         Args:

@@ -54,10 +54,8 @@ class SymbolDictionary:
         self.next_id: int = 0
         self._initialize_special_tokens()
         
-        self.tokenizer = AutoTokenizer.from_pretrained("seyonec/ChemBERTa-zinc-base-v1")
+        # self.tokenizer = AutoTokenizer.from_pretrained("seyonec/ChemBERTa-zinc-base-v1")
 
-        SPECIAL_TOKENS.PAD_ID = self.tokenizer.pad_token_id
-        SPECIAL_TOKENS.CLS_ID = self.tokenizer.cls_token_id
 
     def _initialize_special_tokens(self):
         """初始化特殊标记"""
@@ -157,13 +155,13 @@ class SymbolDictionary:
         Returns:
             List[int]: ID列表
         """
-        return self.tokenizer.encode(
-            smiles_str,
-            add_special_tokens=True,  # 添加[CLS]和[SEP]
-            max_length=512,
-            truncation=True,
-            padding=False
-        )
+        # return self.tokenizer.encode(
+        #     smiles_str,
+        #     add_special_tokens=True,  # 添加[CLS]和[SEP]
+        #     max_length=512,
+        #     truncation=True,
+        #     padding=False
+        # )
         ids = []
         i = 0
         max_symbol_length = max(
