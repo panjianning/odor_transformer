@@ -32,7 +32,7 @@ class PropertyPredConfig:
 
     # 训练参数
     learning_rate: float = 0.0001  # 学习率
-    num_epoch: int = 50           # 训练轮数
+    num_epoch: int = 100           # 训练轮数
     batch_size: int = 32          # 批次大小
     init_range: float = 0.1       # 参数初始化范围
 
@@ -50,7 +50,7 @@ class PropertyPredConfig:
     limit_smiles_length: int = 100  # SMILES最大长度
     fold_cv: int = 5                # 交叉验证折数
     
-    num_tokens: int = 97
+    num_tokens: int = 306
     num_labels: int = 138
 
 class PropertyPredictionModel(nn.Module):
@@ -258,7 +258,7 @@ class ImbalancedBCELoss(nn.Module):
     """
     结合类别权重和Focal Loss的损失函数
     """
-    def __init__(self, pos_weights=None, alpha=1.0, gamma=2.0, weight_factor=0.7):
+    def __init__(self, pos_weights=None, alpha=1.0, gamma=2.0, weight_factor=1.0):
         super(ImbalancedBCELoss, self).__init__()
         self.pos_weights = pos_weights
         self.focal_loss = FocalLoss(alpha=alpha, gamma=gamma, pos_weights=pos_weights)

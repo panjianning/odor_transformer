@@ -49,3 +49,37 @@ tensor(0.9999)
   loss: 0.6644
 {'accuracy': 0.8941215872764587, 'f1_macro': 0.1442432739182713, 'auc_macro': 0.7519886806931402, 'loss': 0.6643555089831352}
 ```
+
+
+## hf tokenizer, focal loss 1.0
+
+```
+Epoch 100/100
+--------------------------------------------------
+  Batch 0/125, Loss: 0.4093
+  Batch 50/125, Loss: 0.4885
+  Batch 100/125, Loss: 0.5121
+tensor(1.0000)
+tensor(1.0000)
+训练结果:
+  Train Loss: 0.4768
+  Val Loss: 0.4833
+  Train Acc: 0.8859
+  Val Acc: 0.8783
+  Train F1-Macro: 0.2069
+  Val F1-Macro: 0.1947
+  Train AUC-Macro: 0.8300
+  Val AUC-Macro: 0.8247
+  Time: 36.57s
+
+训练完成! 总用时: 3872.49s
+
+在测试集上评估...
+tensor(1.0000)
+测试结果:
+  accuracy: 0.8763
+  f1_macro: 0.1914
+  auc_macro: 0.8282
+  loss: 0.4851
+{'accuracy': 0.8763033151626587, 'f1_macro': 0.19139661480346407, 'auc_macro': 0.8281650261676223, 'loss': 0.4850555583834648}
+```
