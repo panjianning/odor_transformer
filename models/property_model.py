@@ -317,11 +317,6 @@ class ThresholdOptimizer:
         """
         为每个类别优化阈值
         """
-        import numpy as np
-        for i in range(len(y_true)):
-            print(len(y_true[i]),len(y_prob[i]))
-        y_true = np.stack(y_true)
-        y_prob = np.stack(y_prob)
         num_classes = y_true.shape[1]
         optimal_thresholds = np.zeros(num_classes)
         
@@ -365,20 +360,18 @@ class ThresholdOptimizer:
         
         self.optimal_thresholds = optimal_thresholds
         return optimal_thresholds
+    
     def predict(self, y_prob):
         """
         使用优化的阈值进行预测
         """
-        
-        y_prob = np.stack(y_prob)
         if self.optimal_thresholds is None:
             raise ValueError("需要先调用optimize_thresholds方法")
-        
         predictions = np.zeros_like(y_prob)
         for class_idx in range(y_prob.shape[1]):
             predictions[:, class_idx] = (y_prob[:, class_idx] >= self.optimal_thresholds[class_idx]).astype(int)
-        
         return predictions
+    
 def calculate_metrics(
     predictions: torch.Tensor,
     targets: torch.Tensor,
@@ -395,7 +388,7 @@ def calculate_metrics(
     metrics = {}
 
     # ============== 多标签分类 ==============
-    print(predictions.max())
+    print(predictions.max())    
     pred_binary = (predictions > 0.5).float()
     accuracy = (pred_binary == targets.float()).float().mean()
     metrics['accuracy'] = accuracy.item()

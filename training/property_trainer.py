@@ -156,7 +156,7 @@ class PropertyTrainer:
         ], weight_decay=0.01)
 
         self.scheduler = ReduceLROnPlateau(
-            self.optimizer, mode='min', factor=0.5, patience=5, verbose=True
+            self.optimizer, mode='min', factor=0.5, patience=5, 
         )
 
     def load_data(self, csv_path: str) -> Tuple[DataLoader, DataLoader, DataLoader, Dict]:
@@ -351,8 +351,10 @@ class PropertyTrainer:
                 all_targets.append(labels.cpu())
                 num_batches += 1
         from models.property_model import ThresholdOptimizer
+        all_predictions = torch.cat(all_predictions, dim=0)
+        all_targets = torch.cat(all_targets, dim=0)
         threshold_optimizer = ThresholdOptimizer(metric='f1')
-        threshold_optimizer.optimize_thresholds(all_targets,all_predictions)
+        threshold_optimizer.optimize_thresholds(all_targets.cpu().numpy(),all_predictions.cpu().numpy())
         return threshold_optimizer
 
     def evaluate(self, dataloader: DataLoader, threshold_optimizer = None) -> Dict[str, float]:
@@ -394,8 +396,9 @@ class PropertyTrainer:
             all_predictions = torch.cat(all_predictions, dim=0)
             all_targets = torch.cat(all_targets, dim=0)
             
-            if threshold_optimizer:
-                threshold_predictions = threshold_optimizer.predict(all_predictions)
+            # if threshold_optimizer:
+            #     all_predictions = threshold_optimizer.predict(all_predictions.cpu().numpy())
+            #     all_predictions = torch.from_numpy(all_predictions)
 
             metrics = calculate_metrics(
                 all_predictions, all_targets,
@@ -594,10 +597,11 @@ class PropertyTrainer:
 
         total_time = time.time() - start_time
         print(f"\n训练完成! 总用时: {total_time:.2f}s")
-        threshold_optimizer = self.optimize_thresholds(train_loader)
+        threshold_optimizer = None
+        # threshold_optimizer = self.optimize_thresholds(test_loader)
         # 测试集评估
         print("\n在测试集上评估...")
-        test_metrics = self.evaluate(test_loader, threshold_optimizer)
+        test_metrics = self.evaluate(test_loader, threshold_optimizer=threshold_optimizer)
         print(f"测试结果:")
         for key, value in test_metrics.items():
             print(f"  {key}: {value:.4f}")
