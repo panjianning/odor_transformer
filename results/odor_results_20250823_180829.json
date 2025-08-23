@@ -1,0 +1,45 @@
+{
+  "timestamp": "2025-08-23T18:08:29.657414",
+  "dataset_info": {
+    "n_samples": 4983,
+    "n_labels": 138,
+    "positive_ratio": 0.035354989573244684
+  },
+  "results": {
+    "random": {
+      "macro_auc": 0.5027927463802204,
+      "macro_f1": 0.060038208938679685,
+      "accuracy": 0.5002981150404128
+    },
+    "majority": {
+      "macro_auc": 0.5,
+      "macro_f1": 0.0,
+      "accuracy": 0.9646450104267553
+    },
+    "frequency": {
+      "macro_auc": 0.5,
+      "macro_f1": 0.0,
+      "accuracy": 0.9646450104267553
+    },
+    "transformer": {
+      "macro_auc": 0,
+      "macro_f1": 0,
+      "accuracy": 0
+    },
+    "graphconv": {
+      "macro_auc": 0,
+      "macro_f1": 0,
+      "accuracy": 0
+    },
+    "mpnn": {
+      "macro_auc": 0,
+      "macro_f1": 0,
+      "accuracy": 0
+    },
+    "attentivefp": {
+      "macro_auc": 0,
+      "macro_f1": 0,
+      "accuracy": 0
+    }
+  }
+}
